@@ -17,6 +17,7 @@ interface ProdutoFormData {
   unidade_medida: string;
   categoria: string;
   ativo: boolean;
+  imagem_url: string;
 }
 
 export default function CadastroProdutoPage() {
@@ -96,7 +97,7 @@ export default function CadastroProdutoPage() {
   }
 
   // A assinatura da função handleSubmit foi atualizada para receber o imageFile
-  const handleSubmit = async (e: React.FormEvent, imageFile: File | null) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {

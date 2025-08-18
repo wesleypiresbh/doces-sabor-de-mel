@@ -15,7 +15,7 @@ interface ProdutoFormData {
 
 interface ProdutoFormProps {
   formData: ProdutoFormData;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | React.ChangeEvent<HTMLSelectElement>>) => void;
+  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
   handleCheckboxChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSubmit: (e: React.FormEvent) => void;
   routerBack: () => void;

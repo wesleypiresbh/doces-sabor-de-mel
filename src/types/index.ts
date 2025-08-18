@@ -3,6 +3,8 @@ export type Cliente = {
   nome: string;
   telefone: string;
   endereco: string;
+  nome_empresa: string;
+  bairro: string;
 };
 
 export type Produto = {
