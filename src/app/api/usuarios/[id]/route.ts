@@ -4,8 +4,9 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 
 // GET: Buscar um usuário específico
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, context: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
+  const { id } = context.params;
 
   if (session?.user?.role !== 'Admin') {
     return NextResponse.json({ message: 'Acesso negado.' }, { status: 403 });
@@ -13,7 +14,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
 
   const client = await pool.connect();
   try {
-    const result = await client.query('SELECT id, nome, email, role FROM usuarios WHERE id = $1', [params.id]);
+    const result = await client.query('SELECT id, nome, email, role FROM usuarios WHERE id = $1', [id]);
     if (result.rows.length === 0) {
       return NextResponse.json({ message: 'Usuário não encontrado.' }, { status: 404 });
     }
@@ -27,14 +28,14 @@ export async function GET(request: Request, { params }: { params: { id: string }
 }
 
 // PUT: Atualizar um usuário
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, context: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
+  const { id } = context.params;
 
   if (session?.user?.role !== 'Admin') {
     return NextResponse.json({ message: 'Acesso negado.' }, { status: 403 });
   }
 
-  const { id } = params;
   const { nome, email, role } = await request.json();
 
   if (!nome || !email || !role) {
@@ -58,7 +59,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     }
 
     return NextResponse.json({ message: 'Usuário atualizado com sucesso!', user: result.rows[0] }, { status: 200 });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Erro ao atualizar usuário:', error);
     // Tratar erro de email duplicado
     if (error.code === '23505') { // unique_violation
@@ -71,15 +72,14 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 }
 
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, context: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
+  const idToDelete = context.params.id;
 
   // 1. Verificar se o usuário é um admin
   if (session?.user?.role !== 'Admin') {
     return NextResponse.json({ message: 'Acesso negado. Somente administradores podem excluir usuários.' }, { status: 403 });
   }
-
-  const idToDelete = params.id;
 
   // 2. Impedir que o admin se auto-delete
   if (session.user.id === idToDelete) {
