@@ -1,10 +1,10 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import pool from '@/lib/neon/client';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 
 // GET: Buscar um usuário específico
-export async function GET(request: Request, context: { params: { id: string } }) {
+export async function GET(request: NextRequest, context: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
   const { id } = context.params;
 
@@ -28,7 +28,7 @@ export async function GET(request: Request, context: { params: { id: string } })
 }
 
 // PUT: Atualizar um usuário
-export async function PUT(request: Request, context: { params: { id: string } }) {
+export async function PUT(request: NextRequest, context: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
   const { id } = context.params;
 
@@ -72,7 +72,7 @@ export async function PUT(request: Request, context: { params: { id: string } })
 }
 
 
-export async function DELETE(request: Request, context: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
   const idToDelete = context.params.id;
 
