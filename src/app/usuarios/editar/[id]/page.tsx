@@ -32,8 +32,9 @@ export default function EditUserPage() {
         }
         const data = await response.json();
         setUser(data);
-      } catch (error: any) {
-        toast.error(error.message);
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : 'Falha ao carregar dados do usuário.';
+        toast.error(message);
         router.push('/usuarios'); // Volta se não encontrar o usuário
       } finally {
         setIsLoading(false);
@@ -67,8 +68,9 @@ export default function EditUserPage() {
       toast.success(data.message);
       setTimeout(() => router.push('/usuarios'), 1500);
 
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Falha ao atualizar usuário.';
+      toast.error(message);
     } finally {
       setIsSaving(false);
     }

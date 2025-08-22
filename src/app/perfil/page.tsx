@@ -41,8 +41,12 @@ export default function PerfilPage() {
         signOut({ callbackUrl: '/login' });
       }, 3000);
 
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Ocorreu um erro desconhecido');
+      }
     }
   };
 

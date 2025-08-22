@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 
 // GET: Buscar um usuário específico
-export async function GET(request: NextRequest, context: any) {
+export async function GET(request: NextRequest, context: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
   const { id } = context.params;
 
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest, context: any) {
 }
 
 // PUT: Atualizar um usuário
-export async function PUT(request: NextRequest, context: any) {
+export async function PUT(request: NextRequest, context: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
   const { id } = context.params;
 
@@ -59,10 +59,10 @@ export async function PUT(request: NextRequest, context: any) {
     }
 
     return NextResponse.json({ message: 'Usuário atualizado com sucesso!', user: result.rows[0] }, { status: 200 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erro ao atualizar usuário:', error);
     // Tratar erro de email duplicado
-    if (error.code === '23505') { // unique_violation
+    if (error && typeof error === 'object' && 'code' in error && error.code === '23505') { // unique_violation
         return NextResponse.json({ message: 'O email informado já está em uso por outro usuário.' }, { status: 409 });
     }
     return NextResponse.json({ message: 'Erro interno do servidor' }, { status: 500 });
@@ -72,7 +72,7 @@ export async function PUT(request: NextRequest, context: any) {
 }
 
 
-export async function DELETE(request: NextRequest, context: any) {
+export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
   const idToDelete = context.params.id;
 
