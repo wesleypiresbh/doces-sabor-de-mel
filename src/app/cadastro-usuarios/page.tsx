@@ -41,7 +41,7 @@ export default function CadastroUsuarioPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ nome, email, password }),
+        body: JSON.stringify({ nome, email, password, role: profile }),
       });
 
       if (!response.ok) {
@@ -126,7 +126,6 @@ export default function CadastroUsuarioPage() {
               disabled={isLoading}
             >
               <option value="User">User</option>
-              <option value="Operador">Operador</option>
               <option value="Admin">Admin</option>
             </select>
           </div>

@@ -3,19 +3,20 @@
 import { useState, useEffect } from 'react'
 import { toast, Toaster } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
+import Link from 'next/link'
 
 // Tipo para o perfil do usuário
 type UserProfile = {
   id: string
   email: string
   nome: string | null
-  // Remover celular e role
-  // celular: string | null
-  // role: string
+  role: string
 }
 
 export default function UsuariosPage() {
   const router = useRouter()
+  const { data: session } = useSession()
   const [users, setUsers] = useState<UserProfile[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -42,6 +43,31 @@ export default function UsuariosPage() {
 
     fetchUsers()
   }, [])
+
+  const handleDelete = async (userId: string) => {
+    if (!window.confirm('Tem certeza que deseja excluir este usuário?')) {
+      return
+    }
+
+    try {
+      const response = await fetch(`/api/usuarios/${userId}`, {
+        method: 'DELETE',
+      })
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Falha ao excluir usuário');
+      }
+
+      setUsers(users.filter((user) => user.id !== userId))
+      toast.success(data.message || 'Usuário excluído com sucesso!')
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Erro desconhecido';
+      toast.error(message)
+      console.error(err)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -80,10 +106,10 @@ export default function UsuariosPage() {
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-amber-800 uppercase">Nome</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-amber-800 uppercase">Email</th>
-                {/* Remover Celular e Perfil */}
-                {/* <th className="px-6 py-3 text-left text-xs font-medium text-amber-800 uppercase">Celular</th> */}
-                {/* <th className="px-6 py-3 text-left text-xs font-medium text-amber-800 uppercase">Perfil</th> */}
-                {/* <th className="px-6 py-3 text-left text-xs font-medium text-amber-800 uppercase">Ações</th> */}
+                <th className="px-6 py-3 text-left text-xs font-medium text-amber-800 uppercase">Perfil</th>
+                {session?.user?.role === 'Admin' && (
+                    <th className="px-6 py-3 text-left text-xs font-medium text-amber-800 uppercase">Ações</th>
+                )}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-amber-200">
@@ -91,13 +117,23 @@ export default function UsuariosPage() {
                 <tr key={user.id}>
                   <td className="px-6 py-4 whitespace-nowrap text-amber-800">{user.nome || 'N/A'}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-amber-800">{user.email}</td>
-                  {/* Remover celular e role */}
-                  {/* <td className="px-6 py-4 whitespace-nowrap text-amber-800">{user.celular || 'N/A'}</td> */}
-                  {/* <td className="px-6 py-4 whitespace-nowrap text-amber-800">{user.role}</td> */}
-                  {/* <td className="px-6 py-4 whitespace-nowrap">
-                    <button className="bg-blue-500 text-white p-2 rounded">Editar</button>
-                    <button className="bg-red-500 text-white p-2 rounded ml-2">Excluir</button>
-                  </td> */}
+                  <td className="px-6 py-4 whitespace-nowrap text-amber-800">{user.role}</td>
+                  {session?.user?.role === 'Admin' && (
+                    <td className="px-6 py-4 whitespace-nowrap space-x-2">
+                      <Link href={`/usuarios/editar/${user.id}`}>
+                        <button className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition-colors">
+                            Editar
+                        </button>
+                      </Link>
+                      <button 
+                        onClick={() => handleDelete(user.id)}
+                        disabled={user.id === session.user.id}
+                        className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                      >
+                        Excluir
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

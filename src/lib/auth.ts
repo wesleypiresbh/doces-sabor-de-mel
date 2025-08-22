@@ -28,7 +28,7 @@ export const authOptions = {
 
           if (user && bcrypt.compareSync(credentials.password, user.hashed_password)) {
             // Retorna o objeto do usuário para o NextAuth
-            return { id: user.id, name: user.nome, email: user.email };
+            return { id: user.id, name: user.nome, email: user.email, role: user.role };
           } else {
             // Retorna nulo se as credenciais estiverem incorretas
             return null;
@@ -53,17 +53,19 @@ export const authOptions = {
     // newUser: '/auth/new-user' // New users will be directed here on first sign in (leave the property out if not of interest)
   },
   callbacks: {
-    async jwt({ token, user }: { token: JWT; user: User }) {
-      // Adiciona o ID do usuário ao token JWT
+    async jwt({ token, user }: { token: JWT; user: User & { role?: string } }) {
+      // Adiciona o ID e o role do usuário ao token JWT
       if (user) {
         token.id = user.id;
+        token.role = user.role;
       }
       return token;
     },
     async session({ session, token }: { session: Session; token: JWT }) {
-      // Adiciona o ID do usuário à sessão
+      // Adiciona o ID e o role do usuário à sessão
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.role = token.role as string;
       }
       return session;
     },

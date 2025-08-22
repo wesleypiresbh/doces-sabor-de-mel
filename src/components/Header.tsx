@@ -9,10 +9,15 @@ export default function Header() {
   return (
     <header className="bg-amber-800 p-4 text-white">
       <nav className="container mx-auto flex justify-between items-center">
-        <Link href="/" className="text-2xl font-bold">
-          Doces Sabor de Mel
-        </Link>
-        <ul className="flex space-x-4">
+        <div>
+          <Link href="/" className="text-2xl font-bold">
+            Doces Sabor de Mel
+          </Link>
+          {session && (
+            <p className="text-sm">Olá, {session.user?.name}</p>
+          )}
+        </div>
+        <ul className="flex space-x-4 items-center">
           {session ? (
             <>
               <li>
@@ -51,7 +56,12 @@ export default function Header() {
                 </Link>
               </li>
               <li>
-                <button onClick={() => signOut()} className="hover:underline bg-transparent border-none text-white cursor-pointer">
+                <Link href="/perfil" className="hover:underline">
+                  Perfil
+                </Link>
+              </li>
+              <li>
+                <button onClick={() => signOut({ callbackUrl: '/login' })} className="hover:underline bg-transparent border-none text-white cursor-pointer">
                   Sair
                 </button>
               </li>

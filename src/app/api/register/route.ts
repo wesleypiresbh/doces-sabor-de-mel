@@ -3,10 +3,15 @@ import pool from '@/lib/neon/client';
 import bcrypt from 'bcryptjs';
 
 export async function POST(request: Request) {
-  const { nome, email, password } = await request.json();
+  const { nome, email, password, role = 'User' } = await request.json(); // Adiciona role com valor padrão 'User'
 
   if (!nome || !email || !password) {
     return NextResponse.json({ message: 'Nome, email e senha são obrigatórios' }, { status: 400 });
+  }
+
+  // Validação simples para o role
+  if (!['User', 'Admin'].includes(role)) {
+    return NextResponse.json({ message: 'Perfil inválido' }, { status: 400 });
   }
 
   const client = await pool.connect();
@@ -21,10 +26,10 @@ export async function POST(request: Request) {
     // Criptografar a senha
     const hashedPassword = bcrypt.hashSync(password, 10);
 
-    // Inserir novo usuário
+    // Inserir novo usuário com o perfil
     await client.query(
-      'INSERT INTO usuarios (nome, email, hashed_password) VALUES ($1, $2, $3)',
-      [nome, email, hashedPassword]
+      'INSERT INTO usuarios (nome, email, hashed_password, role) VALUES ($1, $2, $3, $4)',
+      [nome, email, hashedPassword, role]
     );
 
     return NextResponse.json({ message: 'Usuário criado com sucesso' }, { status: 201 });
