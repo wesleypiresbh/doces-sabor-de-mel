@@ -3,22 +3,9 @@
 import { useState, useEffect } from 'react'
 import { toast, Toaster } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
-import ProdutoForm from '@/components/produtos/ProdutoForm'
+import ProdutoForm, { ProdutoFormData } from '@/components/produtos/ProdutoForm'
 
-// É uma boa prática definir um tipo para o formData
-interface ProdutoFormData {
-  codigo: string;
-  nome: string;
-  descricao: string;
-  preco: string; // Mantido como string para manipulação no input
-  custo: string; // Mantido como string para manipulação no input
-  estoque: string; // Mantido como string inicialmente
-  estoque_minimo: string; // Mantido como string inicialmente
-  unidade_medida: string;
-  categoria: string;
-  ativo: boolean;
-  imagem_url: string;
-}
+
 
 export default function CadastroProdutoPage() {
   const router = useRouter()
@@ -26,14 +13,14 @@ export default function CadastroProdutoPage() {
   const [formData, setFormData] = useState<ProdutoFormData>({
     codigo: '',
     nome: '',
-    descricao: '',
-    preco: '',
-    custo: '',
-    estoque: '',
-    estoque_minimo: '',
+    descricao: null,
+    preco: 0,
+    custo: null,
+    estoque: 0,
+    estoque_minimo: 0,
     unidade_medida: 'un',
-    categoria: '',
-    imagem_url: '',
+    categoria: null,
+    imagem_url: null,
     ativo: true,
   })
 
@@ -62,30 +49,10 @@ export default function CadastroProdutoPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
-    if (name === 'preco' || name === 'custo') {
-      // Para preco e custo (type="text" com maxLength), permite apenas números, vírgula ou ponto
-      // Remove caracteres que não são dígitos, vírgulas ou pontos
-      const cleanedValue = value.replace(/[^\d,.]/g, '');
-      // Opcional: Substituir vírgula por ponto para consistência antes de armazenar ou parsear
-      // Isso é importante se o seu backend ou Supabase espera ponto como separador decimal
-      // cleanedValue = cleanedValue.replace(/,/g, '.');
-
-      setFormData(prev => ({
-        ...prev,
-        [name]: cleanedValue,
-      }));
-    } else if (name === 'estoque' || name === 'estoque_minimo') {
-      // Para estoque e estoque_minimo, permite apenas dígitos
-      const cleanedValue = value.replace(/\D/g, ''); // Remove tudo que não for dígito
-      setFormData(prev => ({
-        ...prev,
-        [name]: cleanedValue,
-      }));
+    if (['preco', 'custo', 'estoque', 'estoque_minimo'].includes(name)) {
+      setFormData(prev => ({ ...prev, [name]: parseFloat(value.replace(',', '.')) || 0 }));
     } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: value,
-      }));
+      setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
 
@@ -104,12 +71,8 @@ export default function CadastroProdutoPage() {
       // Prepara os dados do produto para envio
       const productDataToCreate = {
         ...formData,
-        // Converte os valores para os tipos corretos antes de enviar
-        preco: parseFloat(formData.preco.replace(',', '.')) || 0, // Garante que é um número
-        custo: parseFloat(formData.custo.replace(',', '.')) || 0, // Garante que é um número
-        estoque: parseInt(formData.estoque) || 0, // Garante que é um número inteiro
-        estoque_minimo: parseInt(formData.estoque_minimo) || 0, // Garante que é um número inteiro
-        imagem_url: '', // Imagem desativada por enquanto
+        // Os valores já estão nos tipos corretos devido ao handleChange
+        imagem_url: null, // Imagem desativada por enquanto, definido como null
       };
 
       const response = await fetch('/api/produtos', {

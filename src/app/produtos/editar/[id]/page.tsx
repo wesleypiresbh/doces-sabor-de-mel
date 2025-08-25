@@ -15,14 +15,16 @@ export default function EditarProdutoPage() {
     id: '',
     codigo: '',
     nome: '',
-    descricao: '',
-    preco: '0',
-    custo: '0',
-    estoque: '0',
-    estoque_minimo: '0',
+    descricao: null, // Changed to null as per type definition
+    preco: 0,
+    custo: null, // Changed to null as per type definition
+    estoque: 0,
+    estoque_minimo: 0,
     unidade_medida: 'un',
-    categoria: '',
+    categoria: null, // Changed to null as per type definition
     ativo: true,
+    imagem_url: null, // Added as per type definition
+    data_cadastro: '', // Added as per type definition
   });
   const [loading, setLoading] = useState(true);
 
@@ -35,13 +37,7 @@ export default function EditarProdutoPage() {
             throw new Error('Produto não encontrado');
           }
           const data = await response.json();
-          setFormData({
-            ...data,
-            preco: String(data.preco),
-            custo: String(data.custo),
-            estoque: String(data.estoque),
-            estoque_minimo: String(data.estoque_minimo),
-          });
+          setFormData(data); // Directly set data as types should now match
         } catch (error) {
           toast.error((error as Error).message);
         } finally {
@@ -54,7 +50,12 @@ export default function EditarProdutoPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    // Handle numeric inputs
+    if (['preco', 'custo', 'estoque', 'estoque_minimo'].includes(name)) {
+      setFormData((prev) => ({ ...prev, [name]: parseFloat(value) || 0 }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {

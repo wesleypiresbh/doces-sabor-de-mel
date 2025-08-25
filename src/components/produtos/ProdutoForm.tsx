@@ -1,16 +1,18 @@
 import React from 'react';
 
-interface ProdutoFormData {
+export interface ProdutoFormData {
   codigo: string;
   nome: string;
-  descricao: string;
-  preco: string;
-  custo: string;
-  estoque: string;
-  estoque_minimo: string;
+  descricao: string | null;
+  preco: number;
+  custo: number | null;
+  estoque: number;
+  estoque_minimo: number;
   unidade_medida: string;
-  categoria: string;
+  categoria: string | null;
   ativo: boolean;
+  imagem_url?: string | null; // Optional as it might not be in the form
+  data_cadastro?: string; // Optional as it might not be in the form
 }
 
 interface ProdutoFormProps {
@@ -49,7 +51,7 @@ export default function ProdutoForm({
           <textarea
             name="descricao"
             id="descricao"
-            value={formData.descricao}
+            value={formData.descricao || ''}
             onChange={handleChange}
             rows={3}
             className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm"
@@ -61,7 +63,7 @@ export default function ProdutoForm({
             type="text"
             name="preco"
             id="preco"
-            value={formData.preco}
+            value={formData.preco || 0}
             onChange={handleChange}
             maxLength={10}
             className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm"
@@ -74,7 +76,7 @@ export default function ProdutoForm({
             type="text"
             name="custo"
             id="custo"
-            value={formData.custo}
+            value={formData.custo || 0}
             onChange={handleChange}
             maxLength={10}
             className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm"
@@ -86,7 +88,7 @@ export default function ProdutoForm({
             type="text"
             name="estoque"
             id="estoque"
-            value={formData.estoque}
+            value={formData.estoque || 0}
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm"
             required
@@ -98,7 +100,7 @@ export default function ProdutoForm({
             type="text"
             name="estoque_minimo"
             id="estoque_minimo"
-            value={formData.estoque_minimo}
+            value={formData.estoque_minimo || 0}
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm"
           />
@@ -125,7 +127,7 @@ export default function ProdutoForm({
             type="text"
             name="categoria"
             id="categoria"
-            value={formData.categoria}
+            value={formData.categoria || ''}
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm"
           />
