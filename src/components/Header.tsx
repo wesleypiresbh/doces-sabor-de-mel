@@ -61,7 +61,7 @@ export default function Header() {
                 </Link>
               </li>
               <li>
-                <button onClick={() => signOut({ callbackUrl: '/login' })} className="hover:underline bg-transparent border-none text-white cursor-pointer">
+                <button onClick={() => signOut({ callbackUrl: '/' })} className="hover:underline bg-transparent border-none text-white cursor-pointer">
                   Sair
                 </button>
               </li>
