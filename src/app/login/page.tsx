@@ -1,6 +1,6 @@
 'use client'
 
-import { signIn } from 'next-auth/react';
+import { signIn, getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast, Toaster } from 'react-hot-toast' // Importar Toaster e toast
@@ -23,8 +23,13 @@ export default function LoginPage() {
       if (result?.error) {
         toast.error('Email ou senha inválidos.'); // Mensagem de erro genérica
       } else {
+        const session = await getSession();
         toast.success('Login realizado com sucesso!');
-        router.push('/pedidos');
+        if (session?.user?.role === 'Admin') {
+          router.push('/dashboard');
+        } else {
+          router.push('/pedidos');
+        }
       }
     } catch (error) {
       toast.error('Ocorreu um erro inesperado.');

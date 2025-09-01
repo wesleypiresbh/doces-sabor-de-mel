@@ -2,9 +2,14 @@ export type Cliente = {
   id: string;
   nome: string;
   telefone: string;
-  endereco: string;
-  nome_empresa: string;
-  bairro: string;
+  endereco: string | null;
+  nome_empresa: string | null;
+  bairro: string | null;
+  cidade: string | null;
+  uf: string | null;
+  cep: string | null;
+  email: string | null;
+  ativo: boolean;
 };
 
 export type Produto = {
