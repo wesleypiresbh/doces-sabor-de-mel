@@ -130,7 +130,7 @@ export default function Header() {
                 </li>
                 <li>
                   <button 
-                    onClick={() => signOut({ callbackUrl: '/' })} 
+                    onClick={() => signOut({ callbackUrl: '/login' })} 
                     className="bg-amber-700 hover:bg-amber-600 px-4 py-2 rounded-md transition-colors font-medium border border-amber-600 shadow-sm"
                   >
                     Sair
@@ -250,7 +250,7 @@ export default function Header() {
                   <button 
                     onClick={() => {
                       closeMenu();
-                      signOut({ callbackUrl: '/' });
+                      signOut({ callbackUrl: '/login' });
                     }} 
                     className="w-full text-left px-2 py-3 text-amber-200 hover:bg-amber-700 rounded-md transition-colors font-bold"
                   >
