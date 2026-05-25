@@ -106,4 +106,4 @@ export async function DELETE(request: NextRequest, context: { params: { id: stri
     client.release();
   }
 }
-}
+
