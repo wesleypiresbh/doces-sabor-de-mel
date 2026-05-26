@@ -39,8 +39,9 @@ export default function PerfilPage() {
 
       setMessage(data.message + ' Você será desconectado em breve...');
       
-      setTimeout(() => {
-        signOut({ callbackUrl: '/login' });
+      setTimeout(async () => {
+        await signOut({ redirect: false });
+        window.location.href = '/login';
       }, 3000);
 
     } catch (err: unknown) {
