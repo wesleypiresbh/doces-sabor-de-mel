@@ -19,6 +19,15 @@ export default function Header() {
     setActiveDropdown(activeDropdown === name ? null : name);
   };
 
+  const handleLogout = async () => {
+    const data = await signOut({ 
+      redirect: false, 
+      callbackUrl: '/login' 
+    });
+    // Força um redirecionamento completo para limpar o estado
+    window.location.href = data.url;
+  };
+
   return (
     <header className="bg-amber-800 text-white shadow-md sticky top-0 z-50">
       <nav className="container mx-auto px-4 py-3">
@@ -130,7 +139,7 @@ export default function Header() {
                 </li>
                 <li>
                   <button 
-                    onClick={() => signOut({ callbackUrl: '/login' })} 
+                    onClick={handleLogout} 
                     className="bg-amber-700 hover:bg-amber-600 px-4 py-2 rounded-md transition-colors font-medium border border-amber-600 shadow-sm"
                   >
                     Sair
@@ -250,7 +259,7 @@ export default function Header() {
                   <button 
                     onClick={() => {
                       closeMenu();
-                      signOut({ callbackUrl: '/login' });
+                      handleLogout();
                     }} 
                     className="w-full text-left px-2 py-3 text-amber-200 hover:bg-amber-700 rounded-md transition-colors font-bold"
                   >
