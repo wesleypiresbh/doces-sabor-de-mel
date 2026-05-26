@@ -20,12 +20,9 @@ export default function Header() {
   };
 
   const handleLogout = async () => {
-    const data = await signOut({ 
-      redirect: false, 
+    await signOut({ 
       callbackUrl: '/login' 
     });
-    // Força um redirecionamento completo para limpar o estado
-    window.location.href = data.url;
   };
 
   return (
