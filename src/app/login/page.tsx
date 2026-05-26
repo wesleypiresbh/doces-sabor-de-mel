@@ -30,6 +30,7 @@ export default function LoginPage() {
       } else {
         const session = await getSession();
         toast.success('Bem-vindo(a)!');
+        router.refresh(); // Atualiza o estado do servidor/middleware
         if (session?.user?.role === 'Admin') {
           router.push('/dashboard');
         } else {
